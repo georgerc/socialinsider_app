@@ -37,29 +37,29 @@ def post_brands():
     json_data = json.loads(r.text)
     myList = []
     for result in json_data['result']:
-        brand_likes = 0
+        brand_engagement  = 0
         brand_fans = 0
         brand_count_profile_type = len(result['profiles'])
 
         print(result['brandname'])
         for names in result['profiles']:
-            likes_by_profile_type, fans_by_profile_type = calculate_stats_by_profile_type(names['id'],
+            engagement_by_profile_type, fans_by_profile_type = calculate_stats_by_profile_type(names['id'],
                                                                                           names['profile_type'],
                                                                                           start_date,
                                                                                           end_date)
-            brand_likes = brand_likes + likes_by_profile_type
+            brand_engagement = brand_engagement + engagement_by_profile_type
             brand_fans = brand_fans + fans_by_profile_type
-        dict = {"BrandName": result['brandname'], "Count": brand_count_profile_type, "fans": brand_fans,
-                "likes": brand_likes}
+        dict = {"BrandName": result['brandname'], "Total Profiles": brand_count_profile_type, "Total Fans": brand_fans,
+                "Total Engagement": brand_engagement}
         myList.append(dict)
-        print("COUNT:", brand_count_profile_type, "BRAND FANS: ", brand_fans, "BRAND LIKES: ", brand_likes)
+        print("Total Profiles:", brand_count_profile_type, "Total Fans: ", brand_fans, "Total Engagement: ", brand_engagement)
 
     return jsonify(myList)
     #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
 def calculate_stats_by_profile_type(id, profile_type, start_date, end_date):
-    likes_profile_type = 0
+    engagement_profile_type = 0
     fans_profile_type = 0
     api_url = 'https://app.socialinsider.io/api'
     body = {
@@ -82,14 +82,14 @@ def calculate_stats_by_profile_type(id, profile_type, start_date, end_date):
     # print(json_data['resp'][id])
     for dates in json_data['resp'][id]:
         if 'likes' in json_data['resp'][id][dates]:
-            if json_data['resp'][id][dates]['likes'] is not None:
-                likes_profile_type = likes_profile_type + json_data['resp'][id][dates]['likes']
+            if json_data['resp'][id][dates]['engagement'] is not None:
+                engagement_profile_type = engagement_profile_type + json_data['resp'][id][dates]['engagement']
         if 'fans' in json_data['resp'][id][dates]:
             if json_data['resp'][id][dates]['fans'] is not None:
                 fans_profile_type = fans_profile_type + json_data['resp'][id][dates]['fans']
     # print(likes_profile_type)
     # print(fans_profile_type)
-    return likes_profile_type, fans_profile_type
+    return engagement_profile_type, fans_profile_type
 
 
 if __name__ == '__main__':

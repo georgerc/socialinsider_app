@@ -1,17 +1,17 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <Table />
+    <TableH />
   </div>
 </template>
 
 <script>
-import Table from './components/Table.vue'
+import TableH from './components/TableH.vue'
 
 export default {
   name: 'App',
   components: {
-    Table
+    TableH
   }
 }
 </script>
