@@ -2,9 +2,10 @@
   <div>
     <date-picker
       v-model="time3"
-      @change="updateRows"
+      @change="updateRows()"
       value-type="timestamp"
       range
+      :disabled= "loadMask"
     ></date-picker>
     <b-table striped hover :items="items"></b-table>
   </div>
@@ -24,6 +25,7 @@ export default {
     updateRows() {
       console.log(this.time3[0]);
       console.log(this.time3[1]);
+       this.loadMask=true;
       if(this.time3[0]!=null && this.time3[1]!=null){
       axios({
         method: "post",
@@ -36,6 +38,7 @@ export default {
       }).then((resp) => {
         console.log(resp.data);
         this.items = resp.data;
+        this.loadMask=false
       });
     }
     },
@@ -45,6 +48,7 @@ export default {
     return {
       time3: null,
       items: [],
+      loadMask:false
     };
   },
 };

@@ -10,19 +10,17 @@ CORS(app)
 
 @app.route('/test', methods=['POST'])
 def hello_world():
-    data = request.get_json()  # a multidict containing POST data
+    data = request.get_json()
     print(data['test'])
     return 'hello test'
 
 
 @app.route('/get_brands', methods=['POST'])
 def post_brands():
-    data = request.get_json()  # a multidict containing POST data
-    start_date=data['start_date']
-    end_date=data['end_date']
-    print(start_date,end_date)
-    dummy_start_date = 1608209422374
-    dummy_end_date = 1639745412436
+    data = request.get_json()
+    start_date = data['start_date']
+    end_date = data['end_date']
+    print(start_date, end_date)
     api_url = 'https://app.socialinsider.io/api'
     create_row_data = {
         "jsonrpc": "2.0",
@@ -35,27 +33,29 @@ def post_brands():
 
     r = requests.post(url=api_url, json=create_row_data, headers=headers)
     json_data = json.loads(r.text)
-    myList = []
+    response = []
     for result in json_data['result']:
-        brand_engagement  = 0
+        brand_engagement = 0
         brand_fans = 0
         brand_count_profile_type = len(result['profiles'])
 
         print(result['brandname'])
         for names in result['profiles']:
             engagement_by_profile_type, fans_by_profile_type = calculate_stats_by_profile_type(names['id'],
-                                                                                          names['profile_type'],
-                                                                                          start_date,
-                                                                                          end_date)
+                                                                                               names['profile_type'],
+                                                                                               start_date,
+                                                                                               end_date)
             brand_engagement = brand_engagement + engagement_by_profile_type
             brand_fans = brand_fans + fans_by_profile_type
-        dict = {"BrandName": result['brandname'], "Total Profiles": brand_count_profile_type, "Total Fans": brand_fans,
-                "Total Engagement": brand_engagement}
-        myList.append(dict)
-        print("Total Profiles:", brand_count_profile_type, "Total Fans: ", brand_fans, "Total Engagement: ", brand_engagement)
+        response_item = {"BrandName": result['brandname'], "Total Profiles": brand_count_profile_type,
+                         "Total Fans": brand_fans,
+                         "Total Engagement": brand_engagement}
+        response.append(response_item)
+        print("Total Profiles:", brand_count_profile_type, "Total Fans: ", brand_fans, "Total Engagement: ",
+              brand_engagement)
 
-    return jsonify(myList)
-    #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    return jsonify(response)
+    # return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
 def calculate_stats_by_profile_type(id, profile_type, start_date, end_date):
