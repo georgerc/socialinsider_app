@@ -25,8 +25,9 @@ export default {
     updateRows() {
       console.log(this.time3[0]);
       console.log(this.time3[1]);
-       this.loadMask=true;
+       
       if(this.time3[0]!=null && this.time3[1]!=null){
+      this.loadMask=true;
       axios({
         method: "post",
         url: "http://127.0.0.1:5000/get_brands",
